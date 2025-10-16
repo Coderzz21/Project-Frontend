@@ -65,15 +65,24 @@ const Register = () => {
     if (!validateForm()) return;
 
     try {
-      await dispatch(
+      const resultAction = await dispatch(
         register({
           name: formData.name,
           email: formData.email,
           password: formData.password,
         })
-      );
+      ).unwrap();
+      // On success, show a toast
+      // (the auth slice already sets token and user on fulfilled)
+      // Optionally show success message
+      // toast.success('Account created');
     } catch (error) {
+      // Show backend validation message
       console.error('Registration failed:', error);
+      // use toast if available
+      import('react-hot-toast').then(({ default: toast }) => {
+        toast.error(error.message || String(error));
+      });
     }
   };
 

@@ -25,9 +25,12 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await dispatch(login(formData));
+      await dispatch(login(formData)).unwrap();
     } catch (error) {
       console.error('Login failed:', error);
+      import('react-hot-toast').then(({ default: toast }) => {
+        toast.error(error.message || String(error));
+      });
     }
   };
 

@@ -5,6 +5,7 @@ const initialState = {
   events: [],
   currentEvent: null,
   loading: false,
+  error: null,
   searchTerm: '',
   filters: {
     category: '',
@@ -66,46 +67,86 @@ const eventsSlice = createSlice({
     setFilters: (state, action) => {
       state.filters = { ...state.filters, ...action.payload };
     },
-    clearCurrentEvent: (state) => {
-      state.currentEvent = null;
+    clearFilters: (state) => {
+      state.searchTerm = '';
+      state.filters = {
+        category: '',
+        location: '',
+        priceRange: [0, 1000],
+        date: '',
+      };
     },
     setCurrentPage: (state, action) => {
       state.pagination.currentPage = action.payload;
     },
+    clearCurrentEvent: (state) => {
+      state.currentEvent = null;
+    },
   },
   extraReducers: (builder) => {
     builder
+      // Fetch Events
       .addCase(fetchEvents.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
       .addCase(fetchEvents.fulfilled, (state, action) => {
         state.loading = false;
         state.events = action.payload.events;
         state.pagination = action.payload.pagination;
       })
-      .addCase(fetchEvents.rejected, (state) => {
+      .addCase(fetchEvents.rejected, (state, action) => {
         state.loading = false;
+        state.error = action.error.message;
+      })
+
+      // Fetch Event By ID
+      .addCase(fetchEventById.pending, (state) => {
+        state.loading = true;
+        state.error = null;
       })
       .addCase(fetchEventById.fulfilled, (state, action) => {
+        state.loading = false;
         state.currentEvent = action.payload;
       })
+      .addCase(fetchEventById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+
+      // Create Event
       .addCase(createEvent.fulfilled, (state, action) => {
         state.events.unshift(action.payload);
       })
+
+      // Update Event
       .addCase(updateEvent.fulfilled, (state, action) => {
-        const index = state.events.findIndex(event => event._id === action.payload._id);
+        const index = state.events.findIndex(
+          (event) => event._id === action.payload._id
+        );
         if (index !== -1) {
           state.events[index] = action.payload;
         }
-        if (state.currentEvent && state.currentEvent._id === action.payload._id) {
+        if (state.currentEvent?._id === action.payload._id) {
           state.currentEvent = action.payload;
         }
       })
+
+      // Delete Event
       .addCase(deleteEvent.fulfilled, (state, action) => {
-        state.events = state.events.filter(event => event._id !== action.payload);
+        state.events = state.events.filter(
+          (event) => event._id !== action.payload
+        );
       });
   },
 });
 
-export const { setSearchTerm, setFilters, clearCurrentEvent, setCurrentPage } = eventsSlice.actions;
+export const {
+  setSearchTerm,
+  setFilters,
+  clearFilters,
+  setCurrentPage,
+  clearCurrentEvent,
+} = eventsSlice.actions;
+
 export default eventsSlice.reducer;

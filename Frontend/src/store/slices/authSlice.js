@@ -6,6 +6,7 @@ const initialState = {
   token: localStorage.getItem('token'),
   isAuthenticated: false,
   loading: false,
+  error: null,
 };
 
 // Async thunks
@@ -48,6 +49,7 @@ const authSlice = createSlice({
     builder
       .addCase(register.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
       .addCase(register.fulfilled, (state, action) => {
         state.loading = false;
@@ -56,14 +58,16 @@ const authSlice = createSlice({
         state.isAuthenticated = true;
         localStorage.setItem('token', action.payload.token);
       })
-      .addCase(register.rejected, (state) => {
+      .addCase(register.rejected, (state, action) => {
         state.loading = false;
         state.user = null;
         state.token = null;
         state.isAuthenticated = false;
+        state.error = action.error?.message || 'Registration failed';
       })
       .addCase(login.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
       .addCase(login.fulfilled, (state, action) => {
         state.loading = false;
@@ -72,11 +76,12 @@ const authSlice = createSlice({
         state.isAuthenticated = true;
         localStorage.setItem('token', action.payload.token);
       })
-      .addCase(login.rejected, (state) => {
+      .addCase(login.rejected, (state, action) => {
         state.loading = false;
         state.user = null;
         state.token = null;
         state.isAuthenticated = false;
+        state.error = action.error?.message || 'Login failed';
       })
       .addCase(loadUser.fulfilled, (state, action) => {
         state.user = action.payload;

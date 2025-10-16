@@ -11,8 +11,10 @@ export const store = configureStore({
     bookings: bookingsReducer,
     admin: adminReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
 });
 
-// In plain JS, you don't need the TypeScript types
-// export type RootState = ReturnType<typeof store.getState>;
-// export type AppDispatch = typeof store.dispatch;
+export default store;

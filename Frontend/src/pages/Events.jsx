@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Search, Filter, Calendar, MapPin, DollarSign, X } from 'lucide-react';
-import { fetchEvents, setFilters, clearFilters } from '../redux/slices/eventSlice';
+import { fetchEvents, setFilters, clearFilters } from '../store/slices/eventSlice';
 import EventCard from '../components/Events/EventCard';
 
 const Events = () => {

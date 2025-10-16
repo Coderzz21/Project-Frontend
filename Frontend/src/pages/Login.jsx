@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Mail, Lock, Eye, EyeOff, Calendar } from 'lucide-react';
-import { login, clearError } from '../redux/slices/authSlice';
+import { login, clearError } from '../store/slices/authSlice';
 import toast from 'react-hot-toast';
 
 const Login = () => {
